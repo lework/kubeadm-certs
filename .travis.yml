@@ -2,7 +2,7 @@ sudo: required
 
 language: go
 go:
-  - "1.12.x"
+  - "1.13.x"
 
 branches:
   only:
@@ -74,6 +74,7 @@ deploy:
   release_notes: "Set the validity period of the kubeadm certificate to 10 years. source: https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag} \n 将kubeadm证书的有效期设置为10年。源文件：https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag}"
   skip_cleanup: true
   overwrite: true
+  edge: true # opt in to dpl v2
   on:
     branch: master
 
