@@ -1,0 +1,81 @@
+sudo: required
+
+language: go
+go:
+  - "1.12.x"
+
+branches:
+  only:
+  - master
+
+install:
+  - KUBE_VERSION=$(cat kube_version.txt)
+  - tags="$(git ls-remote --tags https://github.com/kubernetes/kubernetes.git | grep 'v[1-9]\.[0-9]*\.[0-9]*$' | awk -F'tags/' '{print $2}' | sort -t. -k1,1n -k2,2n -k3,3n)"
+  - new_tags="$(printf "%s" "$tags"| sed -n '{/\.0$/{g;p}};h' | tail -4) $(printf "%s" "$tags" | tail -1)"
+  - mkdir -p $GOPATH/src/k8s.io && cd $GOPATH/src/k8s.io
+
+script:
+  - |
+    echo "[tags] $new_tags"
+    for t in $new_tags; do
+      echo "[check] $t"
+      b=$(echo "${KUBE_VERSION}" | grep -w ${t} | wc -l)
+      if [[ $b == 0 ]]; then
+        echo "[build] $t"
+        git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
+        cd kubernetes
+        git checkout -b $t $t
+        git branch
+        [ -f hack/print-workspace-status.sh ] && hack/print-workspace-status.sh
+        sed -i 's#time.Hour \* 24 \* 365#time.Hour * 24 * 365 * 10#g'  cmd/kubeadm/app/constants/constants.go
+        grep -n -R CertificateValidity ./*
+        grep -n -R duration365d ./*
+        KUBE_BUILD_PLATFORMS=linux/386 KUBE_GIT_TREE_STATE=clean make kubeadm GOFLAGS=-v || return 1
+        UBE_BUILD_PLATFORMS=linux/amd64 KUBE_GIT_TREE_STATE=clean make kubeadm GOFLAGS=-v || return 1
+        cp _output/local/bin/linux/386/kubeadm  _output/kubeadm-linux-386
+        cp _output/local/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64
+        ls -al _output/kubeadm-*
+        _output/kubeadm-linux-386 version
+        _output/kubeadm-linux-amd64 version
+        kube_tag=$t
+        break
+      fi
+    done
+  - |
+    echo "kube_tag: ${kube_tag}"
+    [[ "x${kube_tag:-}" == "x" ]] && return 1 || echo ok
+
+cache:
+  directories:
+    - $HOME/.cache/go-build
+    - $HOME/gopath/pkg/mod
+
+after_success:
+  - cd ${TRAVIS_BUILD_DIR}/
+  - git checkout master
+  - git pull
+  - git status
+  - echo "[Push file]"
+  - echo "${kube_tag}" >> kube_version.txt
+  - git config --global user.email "lework@yeah.net"
+  - git config --global user.name "lework"
+  - git remote rm origin
+  - git remote add origin https://${GITHUB_TOKEN}@github.com/lework/kubeadm-certs.git > /dev/null 2>&1
+  - git add -A
+  - git commit -m "add kubeadm $kube_tag"
+  - git push origin master
+
+deploy:
+  provider: releases
+  api_key: "${GITHUB_TOKEN}"
+  tag_name: "${kube_tag}"
+  file: "$GOPATH/src/k8s.io/kubernetes/_output/kubeadm-*"
+  file_glob: "true"
+  release_notes: "Set the validity period of the kubeadm certificate to 10 years. source: https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag} \n 将kubeadm证书的有效期设置为10年。源文件：https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag}"
+  skip_cleanup: true
+  overwrite: true
+  on:
+    branch: master
+
+notifications:
+  email: false
