@@ -26,44 +26,49 @@ script:
         cd kubernetes
         git checkout -b $t $t
         git branch
+
         [ -f hack/print-workspace-status.sh ] && hack/print-workspace-status.sh
         sed -i 's#time.Hour \* 24 \* 365#time.Hour * 24 * 365 * 10#g'  cmd/kubeadm/app/constants/constants.go
         grep -n -R CertificateValidity ./*
         grep -n -R duration365d ./*
+
         KUBE_BUILD_PLATFORMS=linux/386 KUBE_GIT_TREE_STATE=clean make kubeadm GOFLAGS=-v || return 1
         UBE_BUILD_PLATFORMS=linux/amd64 KUBE_GIT_TREE_STATE=clean make kubeadm GOFLAGS=-v || return 1
+
         cp _output/local/bin/linux/386/kubeadm  _output/kubeadm-linux-386
         cp _output/local/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64
         ls -al _output/kubeadm-*
         _output/kubeadm-linux-386 version
         _output/kubeadm-linux-amd64 version
+
         kube_tag=$t
+        echo "kube_tag: ${kube_tag}"
+        [[ "x${kube_tag:-}" == "x" ]] && return 1 || echo ok
+
+        cd ${TRAVIS_BUILD_DIR}/
+        git checkout master
+        git pull
+        git status
+
+        echo "[Push file]"
+        echo "${kube_tag}" >> kube_version.txt
+        git config --global user.email "lework@yeah.net"
+        git config --global user.name "lework"
+        git remote rm origin
+        git remote add origin https://${GITHUB_TOKEN}@github.com/lework/kubeadm-certs.git > /dev/null 2>&1
+        git add -A
+        git commit -m "add kubeadm $kube_tag"
+        git push origin master
         break
+      else
+        echo "[skip] $t"
       fi
     done
-  - |
-    echo "kube_tag: ${kube_tag}"
-    [[ "x${kube_tag:-}" == "x" ]] && return 1 || echo ok
-
+    
 cache:
   directories:
     - $HOME/.cache/go-build
     - $HOME/gopath/pkg/mod
-
-after_success:
-  - cd ${TRAVIS_BUILD_DIR}/
-  - git checkout master
-  - git pull
-  - git status
-  - echo "[Push file]"
-  - echo "${kube_tag}" >> kube_version.txt
-  - git config --global user.email "lework@yeah.net"
-  - git config --global user.name "lework"
-  - git remote rm origin
-  - git remote add origin https://${GITHUB_TOKEN}@github.com/lework/kubeadm-certs.git > /dev/null 2>&1
-  - git add -A
-  - git commit -m "add kubeadm $kube_tag"
-  - git push origin master
 
 deploy:
   provider: releases
