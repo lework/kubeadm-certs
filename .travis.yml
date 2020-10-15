@@ -71,7 +71,7 @@ deploy:
   tag_name: "${kube_tag}"
   file: "$GOPATH/src/k8s.io/kubernetes/_output/kubeadm-*"
   file_glob: "true"
-  release_notes: "Set the validity period of the kubeadm certificate to 10 years. source: https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag} \n 将kubeadm证书的有效期设置为10年。源文件：https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag}"
+  release_notes: "Set the validity period of the kubeadm certificate to 10 years.  \n source: https://github.com/kubernetes/kubernetes/releases/tag/${kube_tag}"
   skip_cleanup: true
   overwrite: true
   edge: true # opt in to dpl v2
