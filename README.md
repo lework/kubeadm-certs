@@ -18,7 +18,11 @@ v1.19.3  go1.15.0
 项目release版本与kubernetes发布版本一致，可以在 [releases](https://github.com/lework/kubeadm-certs/releases) 页面直接查看
 
 ```bash
-[ -f /usr/bin/kubeadm ] && mv /usr/bin/kubeadm{,_bak}
-wget https://github.com/lework/kubeadm-certs/releases/download/v1.18.9/kubeadm-linux-amd64 -o /usr/bin/kubeadm
+[ -f /usr/bin/kubeadm ] && mv /usr/bin/kubeadm{,_src}
+wget https://github.com/lework/kubeadm-certs/releases/download/v1.19.3/kubeadm-linux-amd64 -O /usr/bin/kubeadm
 chmod +x /usr/bin/kubeadm
 ```
+
+## LICENSE
+
+MIT
