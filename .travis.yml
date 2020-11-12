@@ -23,8 +23,15 @@ script:
       b=$(echo "${KUBE_VERSION}" | grep -w ${t} | wc -l)
       if [[ $b == 0 ]]; then
         echo "[build] $t"
+
         go13_version="v1.16 v1.17 v1.18"
-        [[ "${go13_version}" == *"${t%\.*}"* && "$(go version)" == *"go1.13"* ]] && go version || return 0
+        go15_version="v1.19"
+        if [[ "${go13_version}" == *"${t%\.*}"* ]]; then
+          [[  "$(go version)" == *"go1.13"* ]] && go version || return 0
+        elif [[ "${go15_version}" == *"${t%\.*}"* ]]; then
+          [[  "$(go version)" == *"go1.15"* ]] && go version || return 0
+        fi
+
         git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
         cd kubernetes
         git checkout -b $t $t
