@@ -24,7 +24,7 @@ script:
       if [[ $b == 0 ]]; then
         echo "[build] $t"
         go13_version="v1.16 v1.17 v1.18"
-        [[ "${go13_version}" == *"${t%\.*}"* && "$(go version)" == *"go1.13"* ]] && return 0 || go version
+        [[ "${go13_version}" == *"${t%\.*}"* && "$(go version)" == *"go1.13"* ]] && go version || return 0
         git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
         cd kubernetes
         git checkout -b $t $t
