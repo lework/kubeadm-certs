@@ -3,6 +3,7 @@ sudo: required
 language: go
 go:
   - "1.13.x"
+  - "1.15.x"
 
 branches:
   only:
@@ -22,6 +23,8 @@ script:
       b=$(echo "${KUBE_VERSION}" | grep -w ${t} | wc -l)
       if [[ $b == 0 ]]; then
         echo "[build] $t"
+        go13_version="v1.16 v1.17 v1.18"
+        [[ "${go13_version}" == *"${t%\.*}"* ]] && return 1 || go version
         git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
         cd kubernetes
         git checkout -b $t $t
