@@ -30,6 +30,8 @@ script:
           [[  "$(go version)" == *"go1.13"* ]] && go version || return 0
         elif [[ "${go15_version}" == *"${t%\.*}"* ]]; then
           [[  "$(go version)" == *"go1.15"* ]] && go version || return 0
+        else
+          [[  "$(go version)" == *"go1.13"* ]] && return 0
         fi
 
         git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
@@ -67,7 +69,7 @@ script:
         git remote rm origin
         git remote add origin https://${GITHUB_TOKEN}@github.com/lework/kubeadm-certs.git > /dev/null 2>&1
         git add -A
-        git commit -m "add kubeadm $kube_tag"
+        git commit -m "[skip] add kubeadm $kube_tag"
         git push origin master
         break
       else
