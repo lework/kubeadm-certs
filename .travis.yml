@@ -4,6 +4,7 @@ language: go
 go:
   - "1.13.x"
   - "1.15.x"
+  - "1.16.x"
 
 branches:
   only:
@@ -17,23 +18,31 @@ install:
 
 script:
   - |
-    echo "[tags] $new_tags"
+    go_version="$(go version)"
+    echo -e "[Tags] $new_tags"
+    
     for t in $new_tags; do
       echo "[check] $t"
       b=$(echo "${KUBE_VERSION}" | grep -w ${t} | wc -l)
       if [[ $b == 0 ]]; then
-        echo "[build] $t"
+        echo "[Build] $t"
 
         go13_version="v1.16 v1.17 v1.18"
-        go15_version="v1.19"
+        go15_version="v1.19 v1.20"
+        go16_version="v1.21"
+        
         if [[ "${go13_version}" == *"${t%\.*}"* ]]; then
-          [[  "$(go version)" == *"go1.13"* ]] && go version || return 0
+          [[  "${go_version}" != *"go1.13"* ]] && return 0
         elif [[ "${go15_version}" == *"${t%\.*}"* ]]; then
-          [[  "$(go version)" == *"go1.15"* ]] && go version || return 0
+          [[  "${go_version}" != *"go1.15"* ]] || return 0
+        elif [[ "${go16_version}" == *"${t%\.*}"* ]]; then
+          [[  "${go_version}" != *"go1.16"* ]] || return 0
         else
-          [[  "$(go version)" == *"go1.13"* ]] && return 0
+          [[  "${go_version}" == *"go1.13"* ]] && return 0
+          [[  "${go_version}" == *"go1.15"* ]] && return 0
         fi
-
+        echo -e "[Build] ${go_version}"
+        
         git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
         cd kubernetes
         git checkout -b $t $t
