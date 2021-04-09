@@ -34,9 +34,9 @@ script:
         if [[ "${go13_version}" == *"${t%\.*}"* ]]; then
           [[  "${go_version}" != *"go1.13"* ]] && return 0
         elif [[ "${go15_version}" == *"${t%\.*}"* ]]; then
-          [[  "${go_version}" != *"go1.15"* ]] || return 0
+          [[  "${go_version}" != *"go1.15"* ]] && return 0
         elif [[ "${go16_version}" == *"${t%\.*}"* ]]; then
-          [[  "${go_version}" != *"go1.16"* ]] || return 0
+          [[  "${go_version}" != *"go1.16"* ]] && return 0
         else
           [[  "${go_version}" == *"go1.13"* ]] && return 0
           [[  "${go_version}" == *"go1.15"* ]] && return 0
