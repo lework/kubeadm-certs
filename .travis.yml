@@ -1,10 +1,8 @@
 sudo: required
 
 language: go
-go:
-  - "1.13.x"
-  - "1.15.x"
-  - "1.16.x"
+services:
+  - docker
 
 branches:
   only:
@@ -14,50 +12,35 @@ install:
   - KUBE_VERSION=$(cat kube_version.txt)
   - tags="$(git ls-remote --tags https://github.com/kubernetes/kubernetes.git | grep 'v[1-9]\.[0-9]*\.[0-9]*$' | awk -F'tags/' '{print $2}' | sort -t. -k1,1n -k2,2n -k3,3n)"
   - new_tags="$(printf "%s" "$tags"| sed -n '{/\.0$/{g;p}};h' | tail -4) $(printf "%s" "$tags" | tail -1)"
-  - mkdir -p $GOPATH/src/k8s.io && cd $GOPATH/src/k8s.io
+  - echo -e "[Tags] $new_tags"
 
 script:
-  - |
-    go_version="$(go version)"
-    echo -e "[Tags] $new_tags"
-    
     for t in $new_tags; do
       echo "[check] $t"
       b=$(echo "${KUBE_VERSION}" | grep -w ${t} | wc -l)
       if [[ $b == 0 ]]; then
         echo "[Build] $t"
-
-        go13_version="v1.16 v1.17 v1.18"
-        go15_version="v1.19 v1.20"
-        go16_version="v1.21"
-        
-        if [[ "${go13_version}" == *"${t%\.*}"* ]]; then
-          [[  "${go_version}" != *"go1.13"* ]] && return 0
-        elif [[ "${go15_version}" == *"${t%\.*}"* ]]; then
-          [[  "${go_version}" != *"go1.15"* ]] && return 0
-        elif [[ "${go16_version}" == *"${t%\.*}"* ]]; then
-          [[  "${go_version}" != *"go1.16"* ]] && return 0
-        else
-          [[  "${go_version}" == *"go1.13"* ]] && return 0
-          [[  "${go_version}" == *"go1.15"* ]] && return 0
-        fi
-        echo -e "[Build] ${go_version}"
-        
+    
         git clone -q --depth=1 --branch $t --progress https://github.com/kubernetes/kubernetes.git
         cd kubernetes
         git checkout -b $t $t
         git branch
 
-        [ -f hack/print-workspace-status.sh ] && hack/print-workspace-status.sh
         sed -i 's#time.Hour \* 24 \* 365#time.Hour * 24 * 365 * 10#g'  cmd/kubeadm/app/constants/constants.go
         grep -n -R CertificateValidity ./*
         grep -n -R duration365d ./*
 
-        KUBE_BUILD_PLATFORMS=linux/386 KUBE_GIT_TREE_STATE=clean make kubeadm GOFLAGS=-v || return 1
-        UBE_BUILD_PLATFORMS=linux/amd64 KUBE_GIT_TREE_STATE=clean make kubeadm GOFLAGS=-v || return 1
+        build_version=$(cat build/build-image/cross/VERSION)
 
-        cp _output/local/bin/linux/386/kubeadm  _output/kubeadm-linux-386
-        cp _output/local/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64
+        docker pull k8s.gcr.io/kube-cross:${build_version}
+        ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/amd64
+        ls -l _output/dockerized/bin/linux/amd64/
+        
+        ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/386
+        ls -l _output/dockerized/bin/linux/amd64/
+
+        cp _output/dockerized/bin/linux/386/kubeadm  _output/kubeadm-linux-386
+        cp _output/dockerized/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64
         ls -al _output/kubeadm-*
         _output/kubeadm-linux-386 version
         _output/kubeadm-linux-amd64 version
@@ -78,7 +61,7 @@ script:
         git remote rm origin
         git remote add origin https://${GITHUB_TOKEN}@github.com/lework/kubeadm-certs.git > /dev/null 2>&1
         git add -A
-        git commit -m "[skip] add kubeadm $kube_tag"
+        git commit -m "add kubeadm $kube_tag"
         git push origin master
         break
       else
