@@ -46,6 +46,11 @@ script:
         ls -al _output/kubeadm-*
         _output/kubeadm-linux-386 version
         _output/kubeadm-linux-amd64 version
+        
+        echo "[certs] test"
+        sudo _output/kubeadm-linux-amd64 init phase certs all
+        sudo _output/kubeadm-linux-amd64 init phase kubeconfig all
+        sudo _output/kubeadm-linux-amd64 certs check-expiration || sudo _output/kubeadm-linux-amd64 alpha certs check-expiration
 
         kube_tag=$t
         echo "[kube_tag] ${kube_tag}"
