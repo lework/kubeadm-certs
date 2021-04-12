@@ -46,7 +46,7 @@ script:
         _output/kubeadm-linux-amd64 version
 
         kube_tag=$t
-        echo "kube_tag: ${kube_tag}"
+        echo "[kube_tag] ${kube_tag}"
         [[ "x${kube_tag:-}" == "x" ]] && return 1 || echo ok
 
         cd ${TRAVIS_BUILD_DIR}/
