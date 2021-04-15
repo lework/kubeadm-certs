@@ -35,10 +35,10 @@ script:
         build_version=$(cat build/build-image/cross/VERSION)
 
         docker pull k8s.gcr.io/build-image/kube-cross:${build_version}
-        ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/amd64
+        ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/amd64 >/dev/null
         ls -l _output/dockerized/bin/linux/amd64/
         
-        ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/386
+        ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/386 >/dev/null
         ls -l _output/dockerized/bin/linux/amd64/
 
         cp _output/dockerized/bin/linux/386/kubeadm  _output/kubeadm-linux-386
