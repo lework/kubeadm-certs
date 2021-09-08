@@ -1,13 +1,20 @@
 sudo: required
 
 dist: focal
-#language: go
+language: bash
+
 services:
   - docker
 
 branches:
   only:
   - master
+
+before_install:
+  - set -e
+  - mkdir -vp ~/.docker/cli-plugins/
+  - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.darwin-amd64" > ~/.docker/cli-plugins/docker-buildx
+  - chmod a+x ~/.docker/cli-plugins/docker-buildx
   
 install:
   - KUBE_VERSION=$(cat kube_version.txt)
