@@ -13,7 +13,7 @@ branches:
 before_install:
   - set -e
   - mkdir -vp ~/.docker/cli-plugins/
-  - wget https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+  - wget https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64 -O ~/.docker/cli-plugins/docker-buildx
   - chmod a+x ~/.docker/cli-plugins/docker-buildx
   - docker buildx version
   
