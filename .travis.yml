@@ -43,8 +43,8 @@ script:
         ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/386 >/dev/null
         ls -l _output/dockerized/bin/linux/amd64/
 
-        cp _output/dockerized/bin/linux/386/kubeadm  _output/kubeadm-linux-386
-        cp _output/dockerized/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64
+        cp _output/dockerized/bin/linux/386/kubeadm  _output/kubeadm-linux-386 || return 1
+        cp _output/dockerized/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64 || return 1
         ls -al _output/kubeadm-*
         _output/kubeadm-linux-386 version
         _output/kubeadm-linux-amd64 version
