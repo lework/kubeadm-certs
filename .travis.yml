@@ -1,12 +1,20 @@
 sudo: required
 
-language: go
+dist: focal
+#language: go
 services:
   - docker
 
 branches:
   only:
   - master
+  
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
+  - docker info
 
 install:
   - KUBE_VERSION=$(cat kube_version.txt)
@@ -35,8 +43,7 @@ script:
         build_version=$(cat build/build-image/cross/VERSION)
 
         docker pull k8s.gcr.io/build-image/kube-cross:${build_version}
-        export DOCKER_CLI_EXPERIMENTAL=enabled
-
+        
         ./build/run.sh make kubeadm KUBE_BUILD_PLATFORMS=linux/amd64 >/dev/null
         ls -l _output/dockerized/bin/linux/amd64/
         
