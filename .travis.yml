@@ -2,8 +2,8 @@ sudo: required
 
 dist: focal
 #language: go
-services:
-  - docker
+#services:
+#  - docker
 
 branches:
   only:
@@ -85,10 +85,10 @@ script:
       fi
     done
     
-cache:
-  directories:
-    - $HOME/.cache/go-build
-    - $HOME/gopath/pkg/mod
+#cache:
+#  directories:
+#    - $HOME/.cache/go-build
+#    - $HOME/gopath/pkg/mod
 
 deploy:
   provider: releases
