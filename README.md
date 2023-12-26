@@ -5,7 +5,7 @@ kubeadm-certs 只将 kubeadm 的证书有效期设置为10年，未对源码做�
 
 ## go 版本
 
-> [编译最低版本源文件](https://github.com/kubernetes/kubernetes/blob/v1.28.0/hack/lib/golang.sh#L489C28-L489C28)
+> [编译最低版本源文件](https://github.com/kubernetes/kubernetes/blob/3f7a50f38688eb332e2a1b013678c6435d539ae6/hack/lib/golang.sh#L500)
 
 ```bash
 v1.15.12 go1.12.1
@@ -21,20 +21,20 @@ v1.24.0  go1.18.1
 v1.25.0  go1.19
 v1.26.0  go1.19
 v1.27.0  go1.20
-v1.28.0  go1.20 
+v1.28.0  go1.20
+v1.28.0  go1.21
 ```
 
 ## 证书有效期文件
 
 CA 证书
 
-- https://github.com/kubernetes/kubernetes/blob/v1.28.0/staging/src/k8s.io/client-go/util/cert/cert.go#L67 
-- https://github.com/kubernetes/kubernetes/blob/v1.28.0/staging/src/k8s.io/client-go/util/cert/cert.go#L80 
+- https://github.com/kubernetes/kubernetes/blob/v1.29.0/staging/src/k8s.io/client-go/util/cert/cert.go#L79-L80
 
 签发证书
 
-- https://github.com/kubernetes/kubernetes/blob/v1.28.0/cmd/kubeadm/app/constants/constants.go#L49 
-- https://github.com/kubernetes/kubernetes/blob/v1.28.0/cmd/kubeadm/app/util/pkiutil/pki_helpers.go#L653
+- https://github.com/kubernetes/kubernetes/blob/v1.29.0/cmd/kubeadm/app/constants/constants.go#L49 
+- https://github.com/kubernetes/kubernetes/blob/v1.29.0/cmd/kubeadm/app/util/pkiutil/pki_helpers.go#L654
 
 ## 使用
 
