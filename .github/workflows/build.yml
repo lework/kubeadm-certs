@@ -96,8 +96,8 @@ jobs:
               
               echo "Set the validity period of the kubeadm certificate to 10 years.  \n source: ${APP_REPO}/releases/tag/${ADD_TAG}" > CHECKSUMS.txt
               cat _output/kubeadm-linux-{amd64,arm64}.{md5,sha256} >> CHECKSUMS.txt
-              cat _output/kubeadm-{darwin}-{amd64}.{md5,sha256} >> CHECKSUMS.txt
-              cat _output/kubeadm-{windows}-{amd64}.exe.{md5,sha256} >> CHECKSUMS.txt
+              cat _output/kubeadm-darwin-amd64.{md5,sha256} >> CHECKSUMS.txt
+              cat _output/kubeadm-windows-amd64.exe.{md5,sha256} >> CHECKSUMS.txt
               echo "::endgroup::"
               popd
               break
