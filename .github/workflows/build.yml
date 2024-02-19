@@ -66,14 +66,14 @@ jobs:
               cp _output/dockerized/bin/linux/amd64/kubeadm  _output/kubeadm-linux-amd64 || return 1
               cp _output/dockerized/bin/darwin/amd64/kubeadm  _output/kubeadm-darwin-amd64 || return 1
               cp _output/dockerized/bin/windows/amd64/kubeadm.exe  _output/kubeadm-windows-amd64.exe || return 1
-              
-              ls -al _output/kubeadm-*
-              _output/kubeadm-linux-amd64 version
-              
+                          
               md5sum _output/kubeadm-linux-arm64 > _output/kubeadm-linux-arm64.md5 && sha256sum _output/kubeadm-linux-arm64 > _output/kubeadm-linux-arm64.sha256
               md5sum _output/kubeadm-linux-amd64 > _output/kubeadm-linux-amd64.md5 && sha256sum _output/kubeadm-linux-amd64 > _output/kubeadm-linux-amd64.sha256
               md5sum _output/kubeadm-darwin-amd64 > _output/kubeadm-darwin-amd64.md5 && sha256sum _output/kubeadm-darwin-amd64 > _output/kubeadm-darwin-amd64.sha256
               md5sum _output/kubeadm-windows-amd64.exe > _output/kubeadm-windows-amd64.exe.md5 && sha256sum _output/kubeadm-windows-amd64.exe > _output/kubeadm-windows-amd64.exe.sha256
+              
+              ls -al _output/kubeadm-*
+              _output/kubeadm-linux-amd64 version
               
               echo "::debug::[certs] test"
               sudo _output/kubeadm-linux-amd64 init phase certs all
@@ -95,7 +95,9 @@ jobs:
               echo "ADD_TAG=${ADD_TAG}" >> $GITHUB_OUTPUT
               
               echo "Set the validity period of the kubeadm certificate to 10 years.  \n source: ${APP_REPO}/releases/tag/${ADD_TAG}" > CHECKSUMS.txt
-              cat _output/kubeadm-{linux,darwin,windows}-{amd64,arm64,-amd64.exe}.{md5,sha256} >> CHECKSUMS.txt
+              cat _output/kubeadm-linux-{amd64,arm64}.{md5,sha256} >> CHECKSUMS.txt
+              cat _output/kubeadm-{darwin}-{amd64}.{md5,sha256} >> CHECKSUMS.txt
+              cat _output/kubeadm-{windows}-{amd64}.exe.{md5,sha256} >> CHECKSUMS.txt
               echo "::endgroup::"
               popd
               break
