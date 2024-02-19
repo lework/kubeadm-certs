@@ -72,6 +72,11 @@ jobs:
               md5sum _output/kubeadm-darwin-amd64 > _output/kubeadm-darwin-amd64.md5 && sha256sum _output/kubeadm-darwin-amd64 > _output/kubeadm-darwin-amd64.sha256
               md5sum _output/kubeadm-windows-amd64.exe > _output/kubeadm-windows-amd64.exe.md5 && sha256sum _output/kubeadm-windows-amd64.exe > _output/kubeadm-windows-amd64.exe.sha256
               
+              echo -e "Set the validity period of the kubeadm certificate to 10 years.  \n source: ${APP_REPO}/releases/tag/${ADD_TAG}\n" > _output/CHECKSUMS.txt
+              cat _output/kubeadm-linux-{amd64,arm64}.{md5,sha256} >> _output/CHECKSUMS.txt
+              cat _output/kubeadm-darwin-amd64.{md5,sha256} >> _output/CHECKSUMS.txt
+              cat _output/kubeadm-windows-amd64.exe.{md5,sha256} >> _output/CHECKSUMS.txt
+              
               ls -al _output/kubeadm-*
               _output/kubeadm-linux-amd64 version
               
@@ -83,8 +88,10 @@ jobs:
               ADD_TAG=$t
               echo "[ADD_TAG] ${ADD_TAG}"
               [[ "x${ADD_TAG:-}" == "x" ]] && return 1 || echo ok
-           
+              echo "ADD_TAG=${ADD_TAG}" >> $GITHUB_OUTPUT
+              
               echo "::debug::[Push file]"
+              cd ${GITHUB_WORKSPACE}
               echo "${ADD_TAG}" >> kube_version.txt
               
               git config --global user.email "lework@yeah.net"
@@ -92,12 +99,7 @@ jobs:
               git config --global --add safe.directory /github/workspace
               git add kube_version.txt
               git commit -m "add kubeadm $ADD_TAG (Github Actions Automatically Built in `date +"%Y-%m-%d %H:%M"`)"
-              echo "ADD_TAG=${ADD_TAG}" >> $GITHUB_OUTPUT
               
-              echo "Set the validity period of the kubeadm certificate to 10 years.  \n source: ${APP_REPO}/releases/tag/${ADD_TAG}" > CHECKSUMS.txt
-              cat _output/kubeadm-linux-{amd64,arm64}.{md5,sha256} >> CHECKSUMS.txt
-              cat _output/kubeadm-darwin-amd64.{md5,sha256} >> CHECKSUMS.txt
-              cat _output/kubeadm-windows-amd64.exe.{md5,sha256} >> CHECKSUMS.txt
               echo "::endgroup::"
               popd
               break
@@ -130,4 +132,4 @@ jobs:
             ./kubernetes/_output/kubeadm-windows-amd64.exe
             ./kubernetes/_output/kubeadm-windows-amd64.exe.md5
             ./kubernetes/_output/kubeadm-windows-amd64.exe.sha256
-          body_path: ./kubernetes/CHECKSUMS.txt
+          body_path: ./kubernetes/_output/CHECKSUMS.txt
