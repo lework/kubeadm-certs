@@ -72,11 +72,6 @@ jobs:
               md5sum _output/kubeadm-darwin-amd64 > _output/kubeadm-darwin-amd64.md5 && sha256sum _output/kubeadm-darwin-amd64 > _output/kubeadm-darwin-amd64.sha256
               md5sum _output/kubeadm-windows-amd64.exe > _output/kubeadm-windows-amd64.exe.md5 && sha256sum _output/kubeadm-windows-amd64.exe > _output/kubeadm-windows-amd64.exe.sha256
               
-              echo -e "Set the validity period of the kubeadm certificate to 10 years.  \n source: ${APP_REPO}/releases/tag/${ADD_TAG}\n" > _output/CHECKSUMS.txt
-              cat _output/kubeadm-linux-{amd64,arm64}.{md5,sha256} >> _output/CHECKSUMS.txt
-              cat _output/kubeadm-darwin-amd64.{md5,sha256} >> _output/CHECKSUMS.txt
-              cat _output/kubeadm-windows-amd64.exe.{md5,sha256} >> _output/CHECKSUMS.txt
-              
               ls -al _output/kubeadm-*
               _output/kubeadm-linux-amd64 version
               
@@ -89,6 +84,11 @@ jobs:
               echo "[ADD_TAG] ${ADD_TAG}"
               [[ "x${ADD_TAG:-}" == "x" ]] && return 1 || echo ok
               echo "ADD_TAG=${ADD_TAG}" >> $GITHUB_OUTPUT
+              
+              echo -e "Set the validity period of the kubeadm certificate to 10 years.  \nrepo: https://github.com/kubernetes/kubernetes/releases/tag/${ADD_TAG}\n" > _output/CHECKSUMS.txt
+              cat _output/kubeadm-linux-{amd64,arm64}.{md5,sha256} >> _output/CHECKSUMS.txt
+              cat _output/kubeadm-darwin-amd64.{md5,sha256} >> _output/CHECKSUMS.txt
+              cat _output/kubeadm-windows-amd64.exe.{md5,sha256} >> _output/CHECKSUMS.txt
               
               echo "::debug::[Push file]"
               cd ${GITHUB_WORKSPACE}
