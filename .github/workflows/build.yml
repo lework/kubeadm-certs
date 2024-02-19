@@ -130,4 +130,4 @@ jobs:
             ./kubernetes/_output/kubeadm-windows-amd64.exe
             ./kubernetes/_output/kubeadm-windows-amd64.exe.md5
             ./kubernetes/_output/kubeadm-windows-amd64.exe.sha256
-          body_path: ./CHECKSUMS.txt
+          body_path: ./kubernetes/CHECKSUMS.txt
