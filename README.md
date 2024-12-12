@@ -6,7 +6,7 @@ kubeadm-certs 只将 kubeadm 的证书有效期设置为10年，未对源码做�
 
 ## go 版本
 
-> [编译最低版本源文件](https://github.com/kubernetes/kubernetes/blob/7c48c2bd72b9bf5c44d21d7338cc7bea77d0ad2a/hack/lib/golang.sh#L541)
+> [编译最低版本源文件](https://github.com/kubernetes/kubernetes/blob/70d3cc986aa8221cd1dfb1121852688902d3bf53/hack/lib/golang.sh#L554)
 
 ```bash
 v1.15.12 go1.12.1
@@ -25,6 +25,8 @@ v1.27.0  go1.20
 v1.28.0  go1.20
 v1.29.0  go1.21
 v1.30.0  go1.22
+v1.31.0  go1.22
+v1.32.0  go1.23
 ```
 
 ## 证书有效期文件
