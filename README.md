@@ -27,18 +27,19 @@ v1.29.0  go1.21
 v1.30.0  go1.22
 v1.31.0  go1.22
 v1.32.0  go1.23
+v1.33.0  go1.24
 ```
 
 ## 证书有效期文件
 
 CA 证书
 
-- https://github.com/kubernetes/kubernetes/blob/v1.30.0/staging/src/k8s.io/client-go/util/cert/cert.go#L79-L80
+- https://github.com/kubernetes/kubernetes/blob/v1.33.0/staging/src/k8s.io/client-go/util/cert/cert.go#L79-L80
 
 签发证书
 
-- https://github.com/kubernetes/kubernetes/blob/v1.30.0/cmd/kubeadm/app/constants/constants.go#L48
-- https://github.com/kubernetes/kubernetes/blob/v1.30.0/cmd/kubeadm/app/util/pkiutil/pki_helpers.go#L658
+- https://github.com/kubernetes/kubernetes/blob/v1.33.0/cmd/kubeadm/app/constants/constants.go#L48
+- https://github.com/kubernetes/kubernetes/blob/v1.33.0/cmd/kubeadm/app/util/pkiutil/pki_helpers.go#L659
 
 ## 使用
 
